@@ -1,5 +1,6 @@
 import { writeImage, writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { clsx } from 'clsx';
+import moment from 'moment';
 import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
 
@@ -61,3 +62,5 @@ export const copy = async (content: string | Image | Uint8Array | ArrayBuffer | 
 
   await writeImage(content);
 };
+
+export const yyyyMMddHHmmss = (timestamp: string) => moment(timestamp).format('yyyy/MM/DD HH:mm:ss');

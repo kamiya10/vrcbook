@@ -4,14 +4,16 @@ import { Loader2 } from 'lucide-react';
 
 import { APIFetchError, getUserById } from '@/lib/api';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { getUserState, getUserStatus, getUserTrustRank } from '@/lib/user';
+import { normalizeSymbols, yyyyMMddHHmmss } from '@/lib/utils';
 import BackButton from '@/components/common/back-button';
+import DotSeparator from '@/components/common/dot-separator';
 import { ExternalLink } from '@/components/ui/external-link';
 import { Page } from '@/components/ui/page';
 import { StatusBadge } from '@/components/user/status-badge';
 import { TrustRank } from '@/components/user/trust-rank';
 import { getWebsiteFromUrl } from '@/lib/url';
-import { normalizeSymbols } from '@/lib/utils';
 
 import type { User } from '@/lib/models/user';
 
@@ -88,9 +90,41 @@ const UserPage: React.FC = () => {
                 {user.displayName}
                 {' '}
               </div>
-              <div className="">
+              <div className="flex items-center gap-1">
                 {user.pronouns}
                 <TrustRank rank={getUserTrustRank(user)} />
+                {user.badges.length > 0 && (
+                  <>
+                    <DotSeparator />
+                    {user.badges.map((badge) => (
+                      <HoverCard key={`user-badge-${badge.badgeId}`}>
+                        <HoverCardTrigger>
+                          <img
+                            src={badge.badgeImageUrl}
+                            alt={badge.badgeName}
+                            className="size-6"
+                          />
+                        </HoverCardTrigger>
+                        <HoverCardContent className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <img
+                              src={badge.badgeImageUrl}
+                              alt={badge.badgeName}
+                              className="size-12"
+                            />
+                            <div className="flex flex-col">
+                              <span className="font-bold">{badge.badgeName}</span>
+                              <span className="text-xs text-muted-foreground">{yyyyMMddHHmmss(badge.assignedAt)}</span>
+                            </div>
+                          </div>
+                          <div className="text-sm">
+                            {badge.badgeDescription}
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                    ))}
+                  </>
+                )}
               </div>
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
