@@ -12,14 +12,18 @@ type FriendTuple = [LimitedUser, Instance | null];
 
 export interface FriendsStoreState {
   friends: FriendTuple[] | null;
+  pinned: string[];
   setFriend(this: void, friend: FriendTuple): void;
   fetchList(this: void): Promise<void>;
   fetchInstance(this: void, userId: string, force?: boolean): Promise<void>;
+  pin(this: void, id: string): void;
+  unpin(this: void, id: string): void;
 }
 
 export const useFriendsStore = create(
   persist<FriendsStoreState>((set, get) => ({
     friends: null,
+    pinned: [],
     setFriend(friend: FriendTuple) {
       let { friends } = get();
 
@@ -64,6 +68,22 @@ export const useFriendsStore = create(
 
       const instance = await getInstance(friend[0].location);
       setFriend([friend[0], instance] as FriendTuple);
+    },
+    pin(id: string) {
+      const { pinned } = get();
+
+      if (pinned.includes(id)) return;
+
+      pinned.push(id);
+      set({ pinned });
+    },
+    unpin(id: string) {
+      const { pinned } = get();
+
+      if (!pinned.includes(id)) return;
+
+      pinned.splice(id.indexOf(id), 1);
+      set({ pinned });
     },
   }),
   { name: 'friends' }),

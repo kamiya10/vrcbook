@@ -366,7 +366,7 @@ const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 >
                   <Avatar className="group-data-[collapsible=icon]:size-8">
                     <AvatarImage
-                      src={user.currentAvatarThumbnailImageUrl}
+                      src={user.userIcon || user.currentAvatarThumbnailImageUrl}
                       className="object-cover"
                     />
                     <AvatarFallback>asd</AvatarFallback>

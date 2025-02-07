@@ -1,4 +1,4 @@
-import { LogIn, MoreVertical, Star, UserMinus2 } from 'lucide-react';
+import { LogIn, MoreVertical, Pin, PinOff, Star, UserMinus2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -11,6 +11,7 @@ import { ExternalLink } from '@/components/ui/external-link';
 import { StatusBadge } from '@/components/user/status-badge';
 import { TrustRank } from '@/components/user/trust-rank';
 import { getInstance } from '@/lib/api';
+import { useFriendsStore } from '@/stores/friends';
 
 import LocationChip from './location-chip';
 
@@ -23,6 +24,9 @@ interface FriendListItemProps extends React.HtmlHTMLAttributes<HTMLLIElement> {
 
 const FriendListItem: React.FC<FriendListItemProps> = ({ user, className, ...props }) => {
   const navigate = useNavigate();
+  const pinned = useFriendsStore((state) => state.pinned);
+  const pin = useFriendsStore((state) => state.pin);
+  const unpin = useFriendsStore((state) => state.unpin);
   const [location, setLocation] = useState<Instance>();
 
   useEffect(() => {
@@ -101,6 +105,19 @@ const FriendListItem: React.FC<FriendListItemProps> = ({ user, className, ...pro
               <Star />
               <span>Favorite</span>
             </DropdownMenuItem>
+            {pinned.includes(user.id)
+              ? (
+                  <DropdownMenuItem onClick={() => unpin(user.id)}>
+                    <PinOff />
+                    <span>Unpin</span>
+                  </DropdownMenuItem>
+                )
+              : (
+                  <DropdownMenuItem onClick={() => pin(user.id)}>
+                    <Pin />
+                    <span>Pin to top</span>
+                  </DropdownMenuItem>
+                )}
             <DropdownMenuItem className={`
               text-destructive
               hover:!bg-destructive/25 hover:!text-destructive-accent

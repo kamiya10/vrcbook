@@ -1,4 +1,4 @@
-import { ArrowDownAZ, Clock, Loader2, SortAsc, SortDesc } from 'lucide-react';
+import { ArrowDownAZ, Clock, Loader2, Pin, SortAsc, SortDesc, Users2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
@@ -22,14 +22,25 @@ const SortMode = {
   },
 };
 
-const FriendsList: React.FC<{ list: LimitedUser[] }> = ({ list }) => {
+const FriendsList: React.FC<{ list: LimitedUser[]; pinned: LimitedUser[] }> = ({ list, pinned }) => {
   const ref = useRef<HTMLUListElement>(null);
 
   const virtualizer = useVirtualizer({
-    count: list.length,
-    estimateSize: () => 64,
+    count: list.length + pinned.length,
+    estimateSize: (i) => {
+      if (!pinned.length) return 64;
+      if (i == 0) return 32;
+      if (i == pinned.length + 1) return 48;
+      return 64;
+    },
     getScrollElement: () => ref.current,
-    getItemKey: (i) => `friend-list-${list[i].id}`,
+    getItemKey: (i) => {
+      if (!pinned.length) return `friend-list-item-${list[i].id}`;
+      if (i == 0) return 'friend-list-title-pinned';
+      if (i == pinned.length + 1) return 'friend-list-title-all';
+      if (i > 0 && i <= pinned.length) return `friend-list-item-${pinned[i - 1].id}`;
+      return `friend-list-item-${list[i - pinned.length - 2].id}`;
+    },
     overscan: 1,
   });
 
@@ -44,17 +55,71 @@ const FriendsList: React.FC<{ list: LimitedUser[] }> = ({ list }) => {
           height: `${virtualizer.getTotalSize()}px`,
         }}
       >
-        {virtualizer.getVirtualItems().map((v) => (
-          <FriendListItem
-            key={v.key}
-            user={list[v.index]}
-            className="absolute left-0 top-0 w-full"
-            style={{
-              height: `${v.size}px`,
-              transform: `translateY(${v.start}px)`,
-            }}
-          />
-        ))}
+        {virtualizer.getVirtualItems().map((v) => {
+          if (pinned.length && v.index == 0) {
+            return (
+              <div
+                className={`
+                  absolute left-0 top-0 flex h-8 w-full items-center gap-2
+                  text-sm
+                `}
+                style={{
+                  transform: `translateY(${v.start}px)`,
+                }}
+              >
+                <Pin size={18} />
+                Pinned Friends (
+                {pinned.length}
+                )
+              </div>
+            );
+          }
+
+          if (pinned.length && v.index > 0 && v.index <= pinned.length) {
+            return (
+              <FriendListItem
+                key={v.key}
+                user={pinned[v.index - 1]}
+                className="absolute left-0 top-0 w-full"
+                style={{
+                  height: `${v.size}px`,
+                  transform: `translateY(${v.start}px)`,
+                }}
+              />
+            );
+          }
+
+          if (pinned.length && v.index == pinned.length + 1) {
+            return (
+              <div
+                className={`
+                  absolute left-0 top-0 flex h-12 w-full items-center gap-2 pt-4
+                  text-sm
+                `}
+                style={{
+                  transform: `translateY(${v.start}px)`,
+                }}
+              >
+                <Users2 size={18} />
+                All Friends (
+                {list.length}
+                )
+              </div>
+            );
+          }
+
+          return (
+            <FriendListItem
+              key={v.key}
+              user={list[pinned.length ? v.index - pinned.length - 2 : v.index]}
+              className="absolute left-0 top-0 w-full"
+              style={{
+                height: `${v.size}px`,
+                transform: `translateY(${v.start}px)`,
+              }}
+            />
+          );
+        })}
       </div>
     </ul>
   );
@@ -98,11 +163,15 @@ const FriendsPage: React.FC = () => {
 
   const currentSortMode = SortMode[sortMode];
 
+  const allList = friendsStore.friends.filter(([v]) => !friendsStore.pinned.includes(v.id));
+
+  const pinnedList = friendsStore.pinned.map((val) => friendsStore.friends!.find(([v]) => v.id == val)![0]);
+
   const sortedList = (sortMode == 'update'
     ? sortAscending
-      ? [...friendsStore.friends].reverse()
-      : friendsStore.friends
-    : [...friendsStore.friends].sort(([a], [b]) => (+(a.displayName > b.displayName) - 1 || 1) * (+sortAscending - 1 || 1))
+      ? [...allList].reverse()
+      : allList
+    : [...allList].sort(([a], [b]) => (+(a.displayName > b.displayName) - 1 || 1) * (+sortAscending - 1 || 1))
   ).map((v) => v[0]);
 
   return (
@@ -146,7 +215,7 @@ const FriendsPage: React.FC = () => {
           </div>
         </div>
       </PageHeader>
-      <FriendsList list={sortedList} />
+      <FriendsList list={sortedList} pinned={pinnedList} />
     </Page>
   );
 };
