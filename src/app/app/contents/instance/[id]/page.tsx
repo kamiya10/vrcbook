@@ -98,7 +98,7 @@ const InstancePage: React.FC = () => {
               <HoverCard>
                 <HoverCardTrigger asChild>
                   <Link
-                    to={`/app/user/${instance.world.authorId}`}
+                    to={`/app/contents/user/${instance.world.authorId}`}
                     className="underline decoration-dotted underline-offset-2"
                   >
                     {instance.world.authorName}

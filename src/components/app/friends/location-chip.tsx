@@ -30,7 +30,7 @@ const LocationChip: React.FC<LocationChipProps> = ({ instance }) => {
     <HoverCard>
       <HoverCardTrigger asChild>
         <Link
-          to={`/app/instance/${instance.location}`}
+          to={`/app/contents/instance/${instance.location}`}
           className={`
             flex items-center gap-2 rounded-full border bg-muted px-2 py-0.5
             text-xs text-muted-foreground

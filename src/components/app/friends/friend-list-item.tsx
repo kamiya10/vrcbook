@@ -39,7 +39,7 @@ const FriendListItem: React.FC<FriendListItemProps> = ({ user, className, ...pro
 
   const onClick: React.MouseEventHandler<HTMLLIElement> = (ev) => {
     if (!(ev.target instanceof HTMLLIElement)) return;
-    void navigate(`/app/user/${user.id}`);
+    void navigate(`/app/contents/user/${user.id}`);
   };
 
   return (

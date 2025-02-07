@@ -54,14 +54,14 @@ const AppSidebar: React.FC<AppSidebarProps> = (props) => {
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                isActive={pathname == `/app/instance/${currentInstance.id}`}
+                isActive={pathname == `/app/contents/instance/${currentInstance.id}`}
                 className={`
                   h-auto items-stretch
                   group-data-[collapsible=icon]:!p-0
                 `}
               >
                 <Link
-                  to={`/app/instance/${currentInstance.id}`}
+                  to={`/app/contents/instance/${currentInstance.id}`}
                   className={`
                     flex flex-col gap-2 border-2 border-primary bg-primary/15
                     hover:!bg-primary/25
@@ -394,7 +394,7 @@ const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 className="w-[--radix-popper-anchor-width]"
               >
                 <DropdownMenuItem asChild>
-                  <Link to={`/app/user/${user.id}`}>
+                  <Link to={`/app/contents/user/${user.id}`}>
                     <UserCircle2 />
                     <span>View Profile</span>
                   </Link>

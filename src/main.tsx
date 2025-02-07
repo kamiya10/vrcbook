@@ -5,7 +5,7 @@ import { StrictMode } from 'react';
 import AppLayout from './app/layout';
 import FriendsPage from './app/app/friends/page';
 import IndexPage from './app/app/page';
-import InstancePage from './app/app/instance/[id]/page';
+import InstancePage from './app/app/contents/instance/[id]/page';
 import Layout from './app/app/layout';
 import LoadingPage from './app/page';
 import LoginLayout from './app/login/layout';
@@ -13,7 +13,7 @@ import LoginPage from './app/login/page';
 import SettingsPage from './app/settings/page';
 import { ThemeProvider } from './components/theme-provider';
 import TotpPage from './app/login/totp/page';
-import UserPage from './app/app/user/[id]/page';
+import UserPage from './app/app/contents/user/[id]/page';
 import WorldOwnPage from './app/app/world/own/page';
 import { initStronghold } from './lib/stronghold';
 
