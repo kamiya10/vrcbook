@@ -82,7 +82,7 @@ export const useFriendsStore = create(
 
       if (!pinned.includes(id)) return;
 
-      pinned.splice(id.indexOf(id), 1);
+      pinned.splice(pinned.indexOf(id), 1);
       set({ pinned });
     },
   }),
