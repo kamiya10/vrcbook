@@ -64,3 +64,5 @@ export const copy = async (content: string | Image | Uint8Array | ArrayBuffer | 
 };
 
 export const yyyyMMddHHmmss = (timestamp: string) => moment(timestamp).format('yyyy/MM/DD HH:mm:ss');
+
+export const relative = (timestamp: string) => moment(timestamp).fromNow();
