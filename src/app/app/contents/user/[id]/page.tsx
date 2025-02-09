@@ -5,8 +5,9 @@ import { Loader2 } from 'lucide-react';
 import { APIFetchError, getUserById } from '@/lib/api';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { copy, normalizeSymbols, relative, yyyyMMddHHmmss } from '@/lib/utils';
 import { getUserState, getUserStatus, getUserTrustRank } from '@/lib/user';
-import { normalizeSymbols, yyyyMMddHHmmss } from '@/lib/utils';
 import BackButton from '@/components/common/back-button';
 import DotSeparator from '@/components/common/dot-separator';
 import { ExternalLink } from '@/components/ui/external-link';
@@ -86,12 +87,20 @@ const UserPage: React.FC = () => {
           </div>
           <div className="flex flex-1 items-center justify-between gap-2 pb-2">
             <div className="flex flex-col">
-              <div className="text-2xl font-bold">
-                {user.displayName}
-                {' '}
+              <div className="flex items-center gap-2 text-2xl font-bold">
+                <Tooltip>
+                  <TooltipTrigger onClick={() => void copy(user.displayName)}>{user.displayName}</TooltipTrigger>
+                  <TooltipContent>Click to copy</TooltipContent>
+                </Tooltip>
+                {user.pronouns && (
+                  <div className="text-sm font-normal text-muted-foreground">
+                    (
+                    {user.pronouns}
+                    )
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-1">
-                {user.pronouns}
                 <TrustRank rank={getUserTrustRank(user)} />
                 {user.badges.length > 0 && (
                   <>
@@ -139,14 +148,58 @@ const UserPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="p-2">
-          <div className="font-medium">Bio</div>
-          <div className={`
-            select-text whitespace-pre-wrap text-sm text-muted-foreground
-          `}
-          >
-            {normalizeSymbols(user.bio)}
+        <div className="grid grid-cols-2 gap-2">
+          <div className="col-span-2 flex flex-col gap-1">
+            <div className="font-medium">Bio</div>
+            <div className={`
+              select-text whitespace-pre-wrap text-sm text-muted-foreground
+            `}
+            >
+              {normalizeSymbols(user.bio)}
+            </div>
           </div>
+          <div className="col-span-2 flex flex-col gap-1">
+            <div className="font-medium">User Id</div>
+            <div className="select-all font-mono text-sm text-muted-foreground">
+              {user.id}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div className="font-medium">Avatar Cloning</div>
+            <div className="text-sm text-muted-foreground">
+              {user.allowAvatarCopying ? 'Allow' : 'Deny'}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div className="font-medium">Date Joined</div>
+            <div className="flex flex-col text-sm text-muted-foreground">
+              <div>{yyyyMMddHHmmss(user.date_joined)}</div>
+              <div>{relative(user.date_joined)}</div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div className="font-medium">Last Login</div>
+            <div className="flex flex-col text-sm text-muted-foreground">
+              <div>{yyyyMMddHHmmss(user.last_login)}</div>
+              <div>{relative(user.last_login)}</div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div className="font-medium">Last Activity</div>
+            <div className="flex flex-col text-sm text-muted-foreground">
+              <div>{yyyyMMddHHmmss(user.last_activity)}</div>
+              <div>{relative(user.last_activity)}</div>
+            </div>
+          </div>
+          {user.last_mobile && (
+            <div className="flex flex-col gap-1">
+              <div className="font-medium">Last Mobile</div>
+              <div className="flex flex-col text-sm text-muted-foreground">
+                <div>{yyyyMMddHHmmss(user.last_mobile)}</div>
+                <div>{relative(user.last_mobile)}</div>
+              </div>
+            </div>
+          )}
         </div>
       </Page>
     </div>

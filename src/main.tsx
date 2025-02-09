@@ -15,6 +15,7 @@ import { ThemeProvider } from './components/theme-provider';
 import TotpPage from './app/login/totp/page';
 import UserPage from './app/app/contents/user/[id]/page';
 import WorldOwnPage from './app/app/world/own/page';
+import WorldPage from './app/app/contents/world/[id]/page';
 import { initStronghold } from './lib/stronghold';
 
 import '@fontsource/noto-sans/latin.css';
@@ -53,16 +54,22 @@ ReactDOM
                   <Route path="friends" element={<FriendsPage />} />
                 </Route>
 
-                <Route path="user">
-                  <Route path=":id" element={<UserPage />} />
-                </Route>
-
                 <Route path="world">
                   <Route path="own" element={<WorldOwnPage />} />
                 </Route>
 
-                <Route path="instance">
-                  <Route path=":id" element={<InstancePage />} />
+                <Route path="contents">
+                  <Route path="user">
+                    <Route path=":id" element={<UserPage />} />
+                  </Route>
+
+                  <Route path="instance">
+                    <Route path=":id" element={<InstancePage />} />
+                  </Route>
+
+                  <Route path="world">
+                    <Route path=":id" element={<WorldPage />} />
+                  </Route>
                 </Route>
               </Route>
             </Route>

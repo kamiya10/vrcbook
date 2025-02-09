@@ -2,28 +2,23 @@ import { ChevronDown, Copy, ExternalLinkIcon, Loader2, LogIn } from 'lucide-reac
 import { Link, useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { copy, relative, yyyyMMddHHmmss } from '@/lib/utils';
 import BackButton from '@/components/common/back-button';
 import { Button } from '@/components/ui/button';
+import DotSeparator from '@/components/common/dot-separator';
 import { ExternalLink } from '@/components/ui/external-link';
 import { Page } from '@/components/ui/page';
-import { RegionFlag } from '@/lib/constants';
 import { Separator } from '@/components/ui/separator';
-import { TrustRank } from '@/components/user/trust-rank';
 import { UserCard } from '@/components/card/user-card';
-import { WorldCard } from '@/components/card/world-card';
-import { copy } from '@/lib/utils';
-import { getInstance } from '@/lib/api';
-import { getInstanceType } from '@/lib/world';
-import { getUserTrustRank } from '@/lib/user';
+import { getWorldById } from '@/lib/api';
 import { useFriendsStore } from '@/stores/friends';
 
-import type { Instance } from '@/lib/models/world';
+import type { World } from '@/lib/models/world';
 
-const InstancePage: React.FC = () => {
+const WorldPage: React.FC = () => {
   const navigate = useNavigate();
   const friendsStore = useFriendsStore();
   const { id } = useParams();
@@ -32,23 +27,23 @@ const InstancePage: React.FC = () => {
     return (
       <Page className="grid items-center justify-center">
         <div className="flex flex-col items-center">
-          <div>Invalid Instance ID</div>
+          <div>Invalid World ID</div>
           <Button variant="secondary" onClick={() => void navigate(-1)}>Back</Button>
         </div>
       </Page>
     );
   }
 
-  const [instance, setInstance] = useState<Instance | null>(null);
+  const [world, setWorld] = useState<World | null>(null);
 
   useEffect(() => {
     void (async () => {
-      const data = await getInstance(id);
-      setInstance(data);
+      const data = await getWorldById(id);
+      setWorld(data);
     })();
   }, [id]);
 
-  if (!instance) {
+  if (!world) {
     return (
       <Page className="grid h-full w-full items-center justify-center">
         <Loader2 className="animate-spin" />
@@ -56,13 +51,10 @@ const InstancePage: React.FC = () => {
     );
   }
 
-  const Flag = RegionFlag[instance.region];
-  const friendsInInstance = friendsStore.friends?.filter(([v]) => v.location == instance.location) ?? [];
-
   return (
     <div>
       <img
-        src={instance.world.imageUrl}
+        src={world.imageUrl}
         className="h-48 w-full object-cover"
         draggable={false}
       />
@@ -71,48 +63,48 @@ const InstancePage: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <Flag className="w-8 rounded-md border" />
               <span className="text-2xl font-bold">
-                {`#${instance.name}`}
-              </span>
-              <span className="text-2xl font-bold">
-                {getInstanceType(instance)}
+                {world.name}
               </span>
             </div>
 
             <div className="flex gap-1 text-muted-foreground">
-              <HoverCard>
-                <HoverCardTrigger asChild>
-                  <Link
-                    to={`/app/contents/world/${instance.world.id}`}
-                    className="underline decoration-dotted underline-offset-2"
-                  >
-                    {instance.world.name}
-                  </Link>
-                </HoverCardTrigger>
-                <HoverCardContent className="p-0">
-                  <WorldCard worldId={instance.world.id} />
-                </HoverCardContent>
-              </HoverCard>
               by
               <HoverCard>
                 <HoverCardTrigger asChild>
                   <Link
-                    to={`/app/contents/user/${instance.world.authorId}`}
+                    to={`/app/contents/user/${world.authorId}`}
                     className="underline decoration-dotted underline-offset-2"
                   >
-                    {instance.world.authorName}
+                    {world.authorName}
                   </Link>
                 </HoverCardTrigger>
                 <HoverCardContent>
-                  <UserCard userId={instance.world.authorId} />
+                  <UserCard userId={world.authorId} />
                 </HoverCardContent>
               </HoverCard>
+              <DotSeparator />
+              <div className={`
+                font-medium text-blue-500
+                dark:text-blue-400
+              `}
+              >
+                PC
+              </div>
+              <div className={`
+                font-medium text-green-500
+                dark:text-green-400
+              `}
+              >
+                Quest
+              </div>
+              {' '}
+              players in this world
             </div>
           </div>
           <div className="flex gap-2">
             <div className="flex">
-              <ExternalLink href={`https://vrch.at/${instance.secureName}`}>
+              <ExternalLink href={`https://vrchat.com/home/world/${world.id}`}>
                 <Tooltip delayDuration={1000}>
                   <TooltipTrigger asChild>
                     <Button
@@ -138,27 +130,19 @@ const InstancePage: React.FC = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => void copy(`https://vrch.at/${instance.secureName}`)}>
-                    <Copy />
-                    Copy Instance URL
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => void copy(`https://vrchat.com/home/world/${instance.worldId}`)}>
+                  <DropdownMenuItem onClick={() => void copy(`https://vrchat.com/home/world/${world.id}`)}>
                     <Copy />
                     Copy World URL
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => void copy(`https://vrchat.com/home/launch?worldId=${instance.worldId}`)}>
+                  <DropdownMenuItem onClick={() => void copy(`https://vrchat.com/home/launch?worldId=${world.id}`)}>
                     <Copy />
                     Copy World Public URL
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => void copy(`vrchat://launch?ref=vrchat.com&id=${instance.id}`)}>
-                    <Copy />
-                    Copy Launch URL
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
             <div className="flex">
-              <ExternalLink href={`vrchat://launch?ref=vrchat.com&id=${instance.id}`}>
+              <ExternalLink href={`vrchat://launch?ref=vrchat.com&id=${world.id}`}>
                 <Button>
                   <LogIn />
                   {' '}
@@ -186,29 +170,10 @@ const InstancePage: React.FC = () => {
           <div className="flex-1">
             <div className="flex flex-col gap-2">
               <div className="grid grid-cols-2 gap-2">
-                <div className="flex flex-col gap-1">
-                  <div className="font-medium">Users</div>
-                  <div className="flex gap-1 text-sm text-muted-foreground">
-                    <span>{instance.userCount}</span>
-                    {friendsInInstance.length > 0 && <span>{`(${friendsInInstance.length})`}</span>}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <div className="font-medium">Capacity</div>
-                  <div className="flex gap-1 text-sm text-muted-foreground">
-                    {instance.capacity}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <div className="font-medium">Region</div>
-                  <div className="text-sm text-muted-foreground">
-                    {instance.region}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <div className="font-medium">Age Gate</div>
-                  <div className="text-sm text-muted-foreground">
-                    {instance.ageGate ? '✔️' : '✖️'}
+                <div className="col-span-2 flex flex-col gap-1">
+                  <div className="font-medium">Description</div>
+                  <div className="select-text text-sm text-muted-foreground">
+                    {world.description}
                   </div>
                 </div>
                 <div className="col-span-2 flex flex-col gap-1">
@@ -217,45 +182,60 @@ const InstancePage: React.FC = () => {
                     select-all font-mono text-sm text-muted-foreground
                   `}
                   >
-                    {instance.worldId}
+                    {world.id}
                   </div>
                 </div>
-                <div className="col-span-2 flex flex-col gap-1">
-                  <div className="font-medium">Instance Id</div>
-                  <div className={`
-                    select-all font-mono text-sm text-muted-foreground
-                  `}
-                  >
-                    {instance.instanceId}
+                <div className="flex flex-col gap-1">
+                  <div className="font-medium">Heat</div>
+                  <div className="text-sm text-muted-foreground">
+                    {'🔥'.repeat(world.heat)}
+                    {` (${world.heat})`}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="font-medium">Popularity</div>
+                  <div className="text-sm text-muted-foreground">
+                    {'✨'.repeat(world.popularity)}
+                    {` (${world.popularity})`}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="font-medium">Users</div>
+                  <div className="flex gap-1 text-sm text-muted-foreground">
+                    <span>{world.occupants}</span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="font-medium">Capacity</div>
+                  <div className="flex gap-1 text-sm text-muted-foreground">
+                    {world.capacity}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="font-medium">Last Update</div>
+                  <div className="flex gap-1 text-sm text-muted-foreground">
+                    {yyyyMMddHHmmss(world.updated_at)}
+                    {relative(world.updated_at)}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="font-medium">Created At</div>
+                  <div className="flex gap-1 text-sm text-muted-foreground">
+                    {yyyyMMddHHmmss(world.created_at)}
+                    {relative(world.created_at)}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {friendsInInstance.length > 0 && (
-            <div className="p-2">
-              <div className="font-medium">Friends in this Instance</div>
-              <div className="flex flex-col">
-                {friendsInInstance.map(([user]) => (
-                  <div
-                    key={user.id}
-                    className="flex items-center gap-2 rounded-md p-1"
-                  >
-                    <Avatar className="size-8">
-                      <AvatarImage src={user.userIcon || user.currentAvatarThumbnailImageUrl} />
-                      <AvatarFallback>{user.displayName.slice(0, 3)}</AvatarFallback>
-                    </Avatar>
-                    <TrustRank rank={getUserTrustRank(user)}>{user.displayName}</TrustRank>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <div>
+            {world.instances}
+          </div>
         </div>
       </Page>
     </div>
   );
 };
-InstancePage.displayName = 'InstancePage';
+WorldPage.displayName = 'InstancePage';
 
-export default InstancePage;
+export default WorldPage;
