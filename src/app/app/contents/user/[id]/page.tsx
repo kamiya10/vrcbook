@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Loader2 } from 'lucide-react';
 
-import { APIFetchError, getUserById } from '@/lib/api';
+import { APIFetchError, getInstance, getUserById } from '@/lib/api';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -15,8 +15,79 @@ import { Page } from '@/components/ui/page';
 import { StatusBadge } from '@/components/user/status-badge';
 import { TrustRank } from '@/components/user/trust-rank';
 import { getWebsiteFromUrl } from '@/lib/url';
+import { getInstanceType } from '@/lib/world';
 
+import type { Instance } from '@/lib/models/world';
 import type { User } from '@/lib/models/user';
+
+const UserLocation: React.FC<{ user: User }> = ({ user }) => {
+  if (user.location == 'offline') {
+    return;
+  }
+
+  const [instance, setInstance] = useState<Instance | null>();
+
+  if (user.location == 'private') {
+    return 'In Private';
+  }
+
+  useEffect(() => {
+    void (async () => {
+      setInstance(await getInstance(user.location));
+    })();
+  }, [user.location]);
+
+  if (!instance) {
+    return (
+      <div>
+        <Loader2 className="animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="col-span-2 flex flex-col gap-1">
+      <div className="font-medium">
+        {user.displayName}
+        {' '}
+        is currently in
+        {' '}
+      </div>
+      <div className={`
+        select-text whitespace-pre-wrap text-sm text-muted-foreground
+      `}
+      >
+        <div className={`
+          scale-[.99] rounded-lg border-2 border-primary bg-primary/10 p-2
+          transition
+          hover:scale-100 hover:bg-primary/20
+        `}
+        >
+          <div className="flex gap-2">
+            <img className="w-28 rounded-md" src={instance.world.thumbnailImageUrl} alt={instance.world.name} />
+            <div className="flex flex-col">
+              <div className="text-muted-foreground">
+                <span className="text-xl font-bold text-foreground">{instance.world.name}</span>
+                <span> by </span>
+                <span>{instance.world.authorName}</span>
+              </div>
+              <div>
+                <span>{`#${instance.name}`}</span>
+                <span>{getInstanceType(instance)}</span>
+              </div>
+              <div>
+                <span>{instance.userCount}</span>
+                <span>/</span>
+                <span>{instance.capacity}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+UserLocation.displayName = 'UserLocation';
 
 const UserPage: React.FC = () => {
   const { id } = useParams();
@@ -148,7 +219,8 @@ const UserPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 pt-4">
+          {location && <UserLocation user={user} />}
           <div className="col-span-2 flex flex-col gap-1">
             <div className="font-medium">Bio</div>
             <div className={`
