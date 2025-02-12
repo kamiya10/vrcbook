@@ -19,7 +19,7 @@ const LocationChip: React.FC<LocationChipProps> = ({ instance }) => {
       <span
         className={`
           pointer-events-none flex items-center gap-2 rounded-full border
-          bg-muted px-2 py-0.5 text-xs text-muted-foreground opacity-75
+          bg-muted px-2 py-0.5 text-xs text-muted-foreground opacity-60
         `}
       >
         In Private
