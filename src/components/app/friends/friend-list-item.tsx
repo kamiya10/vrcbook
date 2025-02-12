@@ -85,7 +85,11 @@ const FriendListItem: React.FC<FriendListItemProps> = ({ user, className, ...pro
         [&>*]:pointer-events-auto
       `}
       >
-        {user.location == 'private' ? <LocationChip /> : location && <LocationChip instance={location} />}
+        {user.location != 'offline' && user.location == 'traveling'
+          ? <LocationChip instance="traveling" />
+          : user.location == 'private'
+            ? <LocationChip instance="private" />
+            : location && <LocationChip instance={location} />}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">

@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { Loader2 } from 'lucide-react';
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { RegionFlag } from '@/lib/constants';
@@ -7,11 +8,13 @@ import { WorldCard } from '@/components/card/world-card';
 import type { Instance } from '@/lib/models/world';
 
 type LocationChipProps = Readonly<{
-  instance?: Instance;
+  instance: Instance | 'private' | 'traveling' | 'offline';
 }>;
 
 const LocationChip: React.FC<LocationChipProps> = ({ instance }) => {
-  if (!instance) {
+  if (instance == 'offline') return;
+
+  if (instance == 'private') {
     return (
       <span
         className={`
@@ -20,6 +23,20 @@ const LocationChip: React.FC<LocationChipProps> = ({ instance }) => {
         `}
       >
         In Private
+      </span>
+    );
+  }
+
+  if (instance == 'traveling') {
+    return (
+      <span
+        className={`
+          pointer-events-none flex items-center gap-2 rounded-full border
+          bg-muted px-2 py-0.5 text-xs text-muted-foreground
+        `}
+      >
+        <Loader2 className="animate-spin" size={16} />
+        Traveling
       </span>
     );
   }
