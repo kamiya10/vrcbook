@@ -14,8 +14,8 @@ import { ExternalLink } from '@/components/ui/external-link';
 import { Page } from '@/components/ui/page';
 import { StatusBadge } from '@/components/user/status-badge';
 import { TrustRank } from '@/components/user/trust-rank';
-import { getWebsiteFromUrl } from '@/lib/url';
 import { getInstanceType } from '@/lib/world';
+import { getWebsiteFromUrl } from '@/lib/url';
 
 import type { Instance } from '@/lib/models/world';
 import type { User } from '@/lib/models/user';
@@ -28,7 +28,15 @@ const UserLocation: React.FC<{ user: User }> = ({ user }) => {
   const [instance, setInstance] = useState<Instance | null>();
 
   if (user.location == 'private') {
-    return 'In Private';
+    return (
+      <div className="col-span-2 flex flex-col gap-1">
+        <div className="font-medium">
+          {user.displayName}
+          {' '}
+          is currently in a Private World
+        </div>
+      </div>
+    );
   }
 
   useEffect(() => {
