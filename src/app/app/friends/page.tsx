@@ -59,6 +59,7 @@ const FriendsList: React.FC<{ list: LimitedUser[]; pinned: LimitedUser[] }> = ({
           if (pinned.length && v.index == 0) {
             return (
               <div
+                key={v.key}
                 className={`
                   absolute left-0 top-0 flex h-8 w-full items-center gap-2
                   text-sm
@@ -92,6 +93,7 @@ const FriendsList: React.FC<{ list: LimitedUser[]; pinned: LimitedUser[] }> = ({
           if (pinned.length && v.index == pinned.length + 1) {
             return (
               <div
+                key={v.key}
                 className={`
                   absolute left-0 top-0 flex h-12 w-full items-center gap-2 pt-4
                   text-sm

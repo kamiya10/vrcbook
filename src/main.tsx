@@ -4,6 +4,8 @@ import { StrictMode } from 'react';
 
 import AppLayout from './app/layout';
 import FriendsPage from './app/app/friends/page';
+import GalleryPhotosPage from './app/app/gallery/photos/page';
+import GalleryPrintsPage from './app/app/gallery/prints/page';
 import IndexPage from './app/app/page';
 import InstancePage from './app/app/contents/instance/[id]/page';
 import Layout from './app/app/layout';
@@ -56,6 +58,11 @@ ReactDOM
 
                 <Route path="world">
                   <Route path="own" element={<WorldOwnPage />} />
+                </Route>
+
+                <Route path="gallery">
+                  <Route path="photos" element={<GalleryPhotosPage />} />
+                  <Route path="prints" element={<GalleryPrintsPage />} />
                 </Route>
 
                 <Route path="contents">

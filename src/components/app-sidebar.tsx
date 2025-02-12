@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronRight, ChevronsUpDown, Globe2, Home, ScrollText, Search, Settings, Shield, SmilePlus, Star, User, UserCircle2, UserRound, UserRoundPlus, UsersRound } from 'lucide-react';
+import { Camera, ChevronDown, ChevronRight, ChevronsUpDown, Globe2, Home, Image, ScrollText, Search, Settings, Shield, SmilePlus, Star, User, UserCircle2, UserRound, UserRoundPlus, UsersRound } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 
@@ -346,6 +346,43 @@ const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                       </CollapsibleContent>
                     </SidebarMenuItem>
                   </Collapsible>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
+        <Collapsible className="group/gallery">
+          <SidebarGroup>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger>
+                Gallery
+                <ChevronDown
+                  className={`
+                    ml-auto transition-transform
+                    group-data-[state=open]/gallery:rotate-180
+                  `}
+                />
+              </CollapsibleTrigger>
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname == '/app/gallery/photos'}>
+                      <Link to="/app/gallery/photos" replace>
+                        <Image />
+                        Photo
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname == '/app/gallery/prints'}>
+                      <Link to="/app/gallery/prints" replace>
+                        <Camera />
+                        Prints
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
             </CollapsibleContent>

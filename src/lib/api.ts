@@ -5,6 +5,7 @@ import { getCredentialStore } from './stronghold';
 import type { CurrentUser, LimitedUser, User } from './models/user';
 import type { FavoriteGroup, FavoriteWorld } from './models/favorite';
 import type { Instance, World } from './models/world';
+import type { File } from './models/file';
 import type { Require2FA } from './models/require-2fa';
 import type { Status } from '@/components/user/status-badge';
 
@@ -239,6 +240,18 @@ export async function getWorldFavorites() {
 
 export async function getFavoriteGroups() {
   const { data } = await request<FavoriteGroup[]>('/favorite/groups?n=100');
+
+  return data;
+};
+
+export async function getGalleryPrints() {
+  const { data } = await request<File[]>('/files?tag=print&n=100');
+
+  return data;
+};
+
+export async function getGalleryPhotos() {
+  const { data } = await request<File[]>('/files?tag=gallery&n=100');
 
   return data;
 };

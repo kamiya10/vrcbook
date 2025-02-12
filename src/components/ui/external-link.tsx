@@ -37,7 +37,10 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({ href, className, unstyled =
   const [open, setOpen] = useState(false);
 
   const onClick = () => {
-    if (href?.startsWith('https://vrchat.com') || href?.startsWith('https://vrch.at') || href?.startsWith('vrchat://')) {
+    if (href?.startsWith('https://vrchat.com')
+      || href?.startsWith('https://api.vrchat.cloud')
+      || href?.startsWith('https://vrch.at')
+      || href?.startsWith('vrchat://')) {
       launch();
     }
     else {
