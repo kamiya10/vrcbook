@@ -21,16 +21,23 @@ This project uses Tauri + React.js, with Next.js like folder structure.
   - [ ] `/search`
   - [x] `/settings`
   - `/social`
+    - [x] `/friends`
     - [ ] `/favorites/[index]`
-    - [x] `/moderation`
+    - [ ] `/moderation`
   - `/world`
     - [ ] `/own`
     - [ ] `/favorites/[index]`
   - `/avatar`
     - [ ] `/own`
     - [ ] `/favorites/[index]`
-  - [x] `/user/:id`
-  - [x] `/instance/:id`
+  - `/gallery`
+    - [ ] `/icons`
+    - [x] `/photos`: Upload feature not done
+    - [x] `/prints`: Upload feature not done
+  - `/content`
+    - [x] `/user/:id`
+    - [x] `/world/:id`
+    - [x] `/instance/:id`
 
 ### Recommended IDE Setup
 

@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import { StrictMode } from 'react';
 
 import AppLayout from './app/layout';
-import FriendsPage from './app/app/friends/page';
+import FriendsPage from './app/app/social/friends/page';
 import GalleryPhotosPage from './app/app/gallery/photos/page';
 import GalleryPrintsPage from './app/app/gallery/prints/page';
 import IndexPage from './app/app/page';
